@@ -1,0 +1,9 @@
+# HTML: siempre revalidar (sin cachear el documento)
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Assets estaticos: cache larga
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable

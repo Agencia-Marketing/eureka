@@ -1,0 +1,10 @@
+{
+  // Worker solo-assets: sirve la carpeta estatica en /
+  "name": "eureka-rain",
+  "compatibility_date": "2025-06-27",
+  "assets": {
+    "directory": ".",
+    // SPA/estatico: si falta la ruta, sirve index.html
+    "not_found_handling": "single-page-application"
+  }
+}

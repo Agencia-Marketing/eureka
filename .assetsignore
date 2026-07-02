@@ -1,0 +1,5 @@
+wrangler.jsonc
+.assetsignore
+.agents/
+skills-lock.json
+README.md

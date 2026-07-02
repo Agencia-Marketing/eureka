@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eureka — Where Spark Meets Strategy</title>
+  <meta name="description" content="Creative branding for entrepreneurs and bold brands. Where spark meets strategy — animated landing with a playful cartoon vibe." />
+  <meta name="theme-color" content="#f2e500" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='8'%20fill='%23f2e500'/%3E%3C/svg%3E" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Eureka — Where Spark Meets Strategy" />
+  <meta property="og:description" content="Creative branding for entrepreneurs and bold brands." />
+  <meta property="og:image" content="https://eureka-rain.programacionagencia.workers.dev/eureka-amarillo.svg" />
+
+  <style>
+    :root {
+      --ink: #111111;
+      --purple: #5e17a8;
+      --teal-text: #0c7a6c;   /* texto: contraste AA */
+      --teal-btn:  #0a6b5f;   /* boton: blanco encima AA */
+      --teal-accent: #16b5a3; /* foco / checkbox (decorativo) */
+      --yellow: #f2e500;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #ffffff;
+      min-height: 220vh;        /* da recorrido de scroll */
+    }
+    /* utilidad solo lectores de pantalla */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+
+    /* lluvia fija detras de todo */
+    #rain {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+    }
+    .drop {
+      stroke: var(--ink);
+      stroke-linecap: round;
+      fill: none;
+      will-change: transform;
+    }
+    /* seccion heroe */
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 1;
+    }
+    /* personajes asomando por los bordes laterales */
+    .peek {
+      position: absolute;
+      width: clamp(220px, 20vw, 460px);
+      height: auto;
+      z-index: 2;
+      will-change: transform, opacity;
+    }
+    .tl { top: 8%;  left: -90px;  }   /* verde   izq arriba */
+    .tr { top: 8%;  right: -90px; }   /* azul    der arriba */
+    .bl { top: 60%; left: -90px;  }   /* rojo    izq abajo  */
+    .br { top: 60%; right: -90px; }   /* amarillo der abajo  */
+
+    /* texto que sube */
+    #copy {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 12px;
+      padding: 24px;
+      z-index: 3;
+      pointer-events: none;
+    }
+    #copy h1 {
+      font: 700 clamp(28px, 5vw, 56px)/1.1 system-ui, sans-serif;
+      color: var(--ink);
+    }
+    #copy p {
+      font: 400 clamp(15px, 2.4vw, 22px)/1.4 system-ui, sans-serif;
+      color: #555;
+      max-width: 640px;
+    }
+
+    /* seccion frase con palabra rotatoria */
+    #rotator-section {
+      position: relative;
+      z-index: 1;
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+    #rotator-section .phrase {
+      font: 400 clamp(30px, 6vw, 72px)/1.15 system-ui, sans-serif;
+      color: var(--ink);
+      text-align: center;
+    }
+    .rotator {
+      display: inline-block;
+      vertical-align: bottom;
+      white-space: nowrap;
+      text-align: left;
+      color: #0f47bb;          /* azul eureka */
+      font-size: 1.12em;
+      font-weight: 800;
+    }
+    .rotator .ltr { display: inline-block; }
+
+    #scrollhint {
+      position: fixed;
+      bottom: 18px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font: 14px system-ui, sans-serif;
+      color: #888;
+      z-index: 4;
+      user-select: none;
+    }
+
+    /* ===== SECCION CTA ===== */
+    #cta {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      padding: 60px 24px 0;
+      overflow: hidden;
+    }
+    #cta .deco {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #cta .deco .d { position: absolute; }
+    #cta .deco svg * {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #cta .ground-deco { stroke-width: 2.5; }
+
+    #cta .cta-head {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto clamp(180px, 28vh, 360px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+    #cta .cta-head .txt { max-width: 460px; }
+    #cta .cta-head h2 {
+      font: 800 clamp(28px, 4.5vw, 46px)/1.05 system-ui, sans-serif;
+      color: var(--purple);
+      letter-spacing: -0.5px;
+    }
+    #cta .cta-head p {
+      margin-top: 14px;
+      font: 700 clamp(14px, 1.8vw, 18px)/1.4 system-ui, sans-serif;
+      color: var(--teal-text);
+    }
+    /* burbuja de dialogo con personaje */
+    #cta .bubble {
+      position: relative;
+      flex: 0 0 auto;
+      width: 130px;
+      height: 150px;
+      background: transparent;
+      border: 3px solid var(--ink);
+      border-radius: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #cta .bubble img { width: 86%; height: auto; }
+    #cta .bubble::after {
+      content: "";
+      position: absolute;
+      left: -10px;
+      bottom: 26px;
+      width: 26px;
+      height: 26px;
+      background: #fff;
+      border-left: 3px solid var(--ink);
+      border-bottom: 3px solid var(--ink);
+      transform: rotate(45deg);
+      border-bottom-left-radius: 6px;
+    }
+    #cta #bubble-fall {
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0;
+      background: #fff;
+      will-change: transform, opacity;
+    }
+    /* tarjeta del formulario */
+    #cta .form-card {
+      position: relative;
+      z-index: 2;
+      width: min(520px, 92vw);
+      margin: 0 auto;
+      background: var(--yellow);
+      border-radius: 22px;
+      padding: 30px 28px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+    }
+    #cta .field { margin-bottom: 16px; }
+    #cta .field label {
+      display: block;
+      font: 700 13px system-ui, sans-serif;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+    #cta .field input {
+      width: 100%;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 11px 16px;
+      font: 400 15px system-ui, sans-serif;
+      background: #fff;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    #cta .field input:focus-visible {
+      border-color: var(--teal-accent);
+      box-shadow: 0 0 0 3px rgba(22,181,163,0.35);
+    }
+    #cta .field input[aria-invalid="true"] {
+      border-color: #c81e1e;
+      box-shadow: 0 0 0 3px rgba(200,30,30,0.22);
+    }
+    #cta .confirm {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0 20px;
+      font: 600 14px system-ui, sans-serif;
+      color: #1a1a1a;
+      cursor: pointer;
+      user-select: none;
+    }
+    #cta .confirm input { width: 18px; height: 18px; accent-color: var(--teal-accent); cursor: pointer; }
+    #cta .btn-submit {
+      display: block;
+      margin: 0 auto;
+      border: none;
+      background: var(--teal-btn);
+      color: #fff;
+      font: 700 14px system-ui, sans-serif;
+      padding: 13px 30px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform .12s, background .15s;
+    }
+    #cta .btn-submit:hover { background: #07564c; transform: translateY(-1px); }
+    #cta .btn-submit:active { transform: translateY(0); }
+    #cta .btn-submit:focus-visible { outline: 3px solid var(--teal-accent); outline-offset: 2px; }
+    #cta .form-msg {
+      margin-top: 16px;
+      text-align: center;
+      font: 700 14px system-ui, sans-serif;
+      min-height: 20px;
+    }
+    #cta .form-msg.ok  { color: #0a7d2c; }
+    #cta .form-msg.err { color: #b21f1f; }
+
+    /* respeto a usuarios sensibles al movimiento: sin transiciones CSS */
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- defs reutilizables (nube) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="cloud" viewBox="0 0 110 50">
+      <path d="M18 42 Q3 42 7 29 Q3 14 21 17 Q27 4 44 11 Q62 3 66 19 Q88 15 85 31 Q99 33 90 42 Z"/>
+    </symbol>
+  </svg>
+
+  <svg id="rain" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+  <section id="hero">
+    <img class="peek tl" src="eureka-verde.svg"    alt="" aria-hidden="true" />
+    <img class="peek tr" src="eureka-azul.svg"     alt="" aria-hidden="true" />
+    <img class="peek bl" src="eureka-rojo.svg"     alt="" aria-hidden="true" />
+    <img class="peek br" src="eureka-amarillo.svg" alt="" aria-hidden="true" />
+
+    <div id="copy">
+      <h1>WHERE SPARK<br>MEETS STRATEGY</h1>
+      <p>Cuando bajas, los eurekans desaparecen por los bordes y este texto sube.</p>
+    </div>
+  </section>
+
+  <section id="rotator-section">
+    <h2 class="phrase">
+      <span>If you are</span><br>
+      <span class="rotator" aria-hidden="true"></span>
+      <span class="sr-only">an entrepreneur, content creator, or bold brand</span>
+    </h2>
+  </section>
+
+  <section id="cta">
+    <!-- decoraciones cartoon -->
+    <div class="deco" aria-hidden="true">
+      <!-- nubes (reusan el symbol) -->
+      <svg class="d cloud" style="top:6%;left:30%;width:140px"  viewBox="0 0 110 50"><use href="#cloud"/></svg>
+      <svg class="d cloud" style="top:11%;left:6%;width:110px"  viewBox="0 0 110 50"><use href="#cloud"/></svg>
+      <svg class="d cloud" style="top:8%;right:5%;width:130px"  viewBox="0 0 110 50"><use href="#cloud"/></svg>
+      <svg class="d cloud" style="top:30%;left:24%;width:90px"  viewBox="0 0 110 50"><use href="#cloud"/></svg>
+      <svg class="d cloud" style="top:33%;right:18%;width:150px" viewBox="0 0 110 50"><use href="#cloud"/></svg>
+
+      <!-- garabatos sueltos -->
+      <svg class="d" style="top:9%;left:55%;width:18px"  viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/></svg>
+      <svg class="d" style="top:24%;left:4%;width:20px"  viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/></svg>
+      <svg class="d" style="top:25%;left:14%;width:20px" viewBox="0 0 24 24"><path d="M12 4 V20 M4 12 H20"/></svg>
+      <svg class="d" style="top:28%;right:8%;width:60px" viewBox="0 0 60 16"><path d="M2 8 Q9 0 16 8 T30 8 T44 8 T58 8"/></svg>
+      <svg class="d" style="top:34%;left:16%;width:60px" viewBox="0 0 60 16"><path d="M2 8 Q9 0 16 8 T30 8 T44 8 T58 8"/></svg>
+
+      <!-- arboles + arbustos en la base -->
+      <svg class="d ground-deco" style="bottom:0;left:1%;width:150px"  viewBox="0 0 120 170"><circle cx="40" cy="45" r="34"/><circle cx="72" cy="60" r="26"/><circle cx="34" cy="78" r="28"/><path d="M48 100 V168"/></svg>
+      <svg class="d ground-deco" style="bottom:0;right:3%;width:120px" viewBox="0 0 100 180"><path d="M50 16 C84 40 84 96 50 120 C16 96 16 40 50 16 Z"/><path d="M50 60 V178"/></svg>
+      <svg class="d ground-deco" style="bottom:0;left:24%;width:120px" viewBox="0 0 140 50"><path d="M2 48 Q14 22 30 34 Q40 12 60 28 Q74 14 90 30 Q110 20 122 36 Q134 30 138 48"/></svg>
+      <svg class="d ground-deco" style="bottom:0;right:22%;width:130px" viewBox="0 0 140 50"><path d="M2 48 Q14 22 30 34 Q40 12 60 28 Q74 14 90 30 Q110 20 122 36 Q134 30 138 48"/></svg>
+    </div>
+
+    <!-- encabezado + burbuja -->
+    <div class="cta-head">
+      <div class="txt">
+        <h2>Ready To Get Started?</h2>
+        <p>If you're an entrepreneur or brand that values creativity, authenticity, and real results, let's talk.</p>
+      </div>
+      <div class="bubble">
+        <img src="eureka-amarillo.svg" alt="" aria-hidden="true" />
+      </div>
+    </div>
+
+    <!-- burbuja con amarillo que cae al hacer scroll -->
+    <div id="bubble-fall" class="bubble" aria-hidden="true">
+      <img src="eureka-amarillo.svg" alt="" />
+    </div>
+
+    <!-- formulario (demo, sin backend) -->
+    <form class="form-card" id="cta-form" novalidate>
+      <div class="field">
+        <label for="f-name">Name</label>
+        <input type="text" id="f-name" name="name" autocomplete="name" aria-describedby="form-msg" />
+      </div>
+      <div class="field">
+        <label for="f-email">Email</label>
+        <input type="email" id="f-email" name="email" autocomplete="email" aria-describedby="form-msg" />
+      </div>
+      <div class="field">
+        <label for="f-phone">Phone</label>
+        <input type="tel" id="f-phone" name="phone" autocomplete="tel" aria-describedby="form-msg" />
+      </div>
+      <label class="confirm">
+        <input type="checkbox" id="f-confirm" checked /> Confirm
+      </label>
+      <button type="submit" class="btn-submit">Book Your Discovery Call</button>
+      <div class="form-msg" id="form-msg" role="status" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <div id="scrollhint">▼ scroll ▼</div>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+    integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+    integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+  (() => {
+    'use strict';
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ---------- CONFIG central ---------- */
+    const CONFIG = {
+      rain:    { count: 90, minLen: 40, maxLen: 120, minW: 0.8, maxW: 2, minDur: 0.5, maxDur: 1.1 },
+      hero:    { exit: 260 },
+      rotator: { words: ['entrepreneur', 'content creator', 'bold brand'], hold: 1.2, inDur: 0.35, outDur: 0.4, stagger: 0.07 },
+      cta:     { fallFrom: -160, fallDur: 1.1 }
+    };
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rand = (min, max) => Math.random() * (max - min) + min;
+    const SVGNS = 'http://www.w3.org/2000/svg';
+
+    /* ---------- LLUVIA (transform, pausable) ---------- */
+    const svg = document.getElementById('rain');
+    let W = window.innerWidth, H = window.innerHeight;
+    const rainTweens = [];
+
+    function sizeRain() {
+      W = window.innerWidth; H = window.innerHeight;
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svg.setAttribute('width', W);
+      svg.setAttribute('height', H);
+    }
+
+    function buildRain() {
+      svg.innerHTML = '';
+      rainTweens.length = 0;
+      const r = CONFIG.rain;
+      for (let i = 0; i < r.count; i++) {
+        const len = rand(r.minLen, r.maxLen);
+        const line = document.createElementNS(SVGNS, 'line');
+        line.setAttribute('x1', 0); line.setAttribute('y1', 0);
+        line.setAttribute('x2', 0); line.setAttribute('y2', len);
+        line.setAttribute('stroke-width', rand(r.minW, r.maxW));
+        line.classList.add('drop');
+        svg.appendChild(line);
+        const startY = -len - rand(0, H * 0.5);
+        const endY = H + len;
+        const t = gsap.fromTo(line,
+          { x: rand(0, W), y: startY },
+          {
+            y: endY,
+            duration: rand(r.minDur, r.maxDur),
+            ease: 'none',
+            repeat: -1,
+            delay: rand(0, 1.5),
+            onRepeat() { gsap.set(line, { x: rand(0, W) }); }
+          }
+        );
+        rainTweens.push(t);
+      }
+    }
+
+    const setRainPaused = p => rainTweens.forEach(t => (p ? t.pause() : t.resume()));
+
+    sizeRain();
+    if (!reduced) {
+      buildRain();
+      // pausar cuando la pestaña no esta visible (ahorra CPU/bateria)
+      document.addEventListener('visibilitychange', () => setRainPaused(document.hidden));
+      // reconstruir en resize (debounced) para adaptar a nuevo viewport
+      let rid;
+      window.addEventListener('resize', () => {
+        clearTimeout(rid);
+        rid = setTimeout(() => { sizeRain(); buildRain(); }, 200);
+      });
+    }
+
+    /* ---------- HERO: esconder personajes + subir texto ---------- */
+    gsap.set('.tl, .bl', { rotation: 90 });
+    gsap.set('.tr, .br', { rotation: -90 });
+
+    if (reduced) {
+      gsap.set('#copy', { opacity: 1, y: 0 });
+    } else {
+      const heroTl = gsap.timeline({
+        scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=100%', scrub: true, pin: true }
+      });
+      heroTl
+        .to('.tl', { xPercent: -CONFIG.hero.exit, opacity: 0, ease: 'none' }, 0)
+        .to('.tr', { xPercent:  CONFIG.hero.exit, opacity: 0, ease: 'none' }, 0)
+        .to('.bl', { xPercent: -CONFIG.hero.exit, opacity: 0, ease: 'none' }, 0)
+        .to('.br', { xPercent:  CONFIG.hero.exit, opacity: 0, ease: 'none' }, 0)
+        .fromTo('#copy', { y: 90, opacity: 0 }, { y: 0, opacity: 1, ease: 'none' }, 0);
+
+      gsap.to('#scrollhint', {
+        opacity: 0,
+        scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=20%', scrub: true }
+      });
+    }
+
+    /* ---------- PALABRA ROTATORIA ---------- */
+    const WORDS = CONFIG.rotator.words;
+
+    function fixRotatorWidth(rotator) {
+      const probe = document.createElement('span');
+      probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;';
+      rotator.appendChild(probe);
+      let maxW = 0;
+      WORDS.forEach(w => { probe.textContent = w; maxW = Math.max(maxW, probe.offsetWidth); });
+      probe.remove();
+      rotator.style.width = Math.ceil(maxW) + 'px';
+    }
+
+    function startRotator() {
+      const rotator = document.querySelector('.rotator');
+      fixRotatorWidth(rotator);
+
+      // recalcular ancho si cambia el viewport (clamp font-size)
+      let wid;
+      window.addEventListener('resize', () => {
+        clearTimeout(wid);
+        wid = setTimeout(() => fixRotatorWidth(rotator), 200);
+      });
+
+      if (reduced) {
+        // fade simple, sin letra por letra
+        let i = 0;
+        const show = () => {
+          rotator.textContent = WORDS[i % WORDS.length];
+          gsap.fromTo(rotator, { opacity: 0 }, { opacity: 1, duration: 0.4 });
+          i++;
+        };
+        show();
+        setInterval(() => gsap.to(rotator, { opacity: 0, duration: 0.3, onComplete: show }), 2400);
+        return;
+      }
+
+      const cfg = CONFIG.rotator;
+      const buildLetters = word => {
+        rotator.innerHTML = '';
+        const spans = [];
+        for (const ch of word) {
+          const s = document.createElement('span');
+          s.className = 'ltr';
+          s.textContent = ch === ' ' ? ' ' : ch;
+          rotator.appendChild(s);
+          spans.push(s);
+        }
+        return spans;
+      };
+      const cycle = i => {
+        const letters = buildLetters(WORDS[i % WORDS.length]);
+        gsap.timeline({ onComplete: () => cycle(i + 1) })
+          .from(letters, { opacity: 0, y: '0.5em', duration: cfg.inDur, stagger: cfg.stagger, ease: 'power2.out' })
+          .to(letters, { opacity: 0, duration: cfg.outDur, ease: 'power1.in' }, `+=${cfg.hold}`);
+      };
+      cycle(0);
+    }
+
+    /* ---------- SECCION CTA: entrada + validacion ---------- */
+    gsap.set('#bubble-fall', { xPercent: -50 });
+
+    if (reduced) {
+      gsap.set(['#cta .deco .d', '#cta .cta-head', '#cta .form-card'], { opacity: 1 });
+      gsap.set('#cta .form-card', { scale: 1 });
+    } else {
+      gsap.set('#cta .deco .d', { opacity: 0 });
+      gsap.set(['#cta .cta-head', '#cta .form-card'], { opacity: 0 });
+      gsap.set('#cta .form-card', { scale: 0.9, transformOrigin: '50% 0%' });
+
+      ScrollTrigger.create({ trigger: '#cta', start: 'top 70%', once: true, onEnter: playCtaIntro });
+    }
+
+    function playCtaIntro() {
+      const faller = document.getElementById('bubble-fall');
+      const card = document.querySelector('#cta .form-card');
+      const c = card.getBoundingClientRect();
+      const f = faller.getBoundingClientRect();
+      const dropTo = (c.top - f.top) + (c.height / 2) - (f.height / 2);
+
+      gsap.timeline()
+        .from('#cta .cta-head', { y: 30, duration: 0.6, ease: 'power3.out' })
+        .to('#cta .cta-head', { opacity: 1, duration: 0.6 }, '<')
+        .from('#cta .bubble', { scale: 0, transformOrigin: '0% 100%', duration: 0.5, ease: 'back.out(1.7)' }, '-=0.3')
+        .to('#cta .deco .d', { opacity: 1, duration: 0.5, stagger: 0.06 }, '-=0.3')
+        .set(faller, { opacity: 1, y: CONFIG.cta.fallFrom, rotation: -8 })
+        .to(faller, { y: dropTo, rotation: 6, duration: CONFIG.cta.fallDur, ease: 'bounce.out' })
+        .to(card, { opacity: 1, scale: 1, duration: 0.45, ease: 'back.out(1.6)' }, '-=0.15')
+        .to(faller, { opacity: 0, duration: 0.3 }, '<');
+    }
+
+    // validacion demo (sin backend)
+    const form = document.getElementById('cta-form');
+    const msg = document.getElementById('form-msg');
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const mark = (el, bad) => el.setAttribute('aria-invalid', bad ? 'true' : 'false');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = document.getElementById('f-name');
+      const email = document.getElementById('f-email');
+      const phone = document.getElementById('f-phone');
+      const confirmEl = document.getElementById('f-confirm');
+
+      const nameBad  = !name.value.trim();
+      const emailBad = !emailRe.test(email.value);
+      const phoneBad = !phone.value.trim();
+      mark(name, nameBad); mark(email, emailBad); mark(phone, phoneBad);
+
+      if (nameBad || emailBad || phoneBad) {
+        msg.textContent = 'Revisa los campos marcados.';
+        msg.className = 'form-msg err';
+        (nameBad ? name : emailBad ? email : phone).focus();
+        return;
+      }
+      if (!confirmEl.checked) {
+        msg.textContent = 'Marca "Confirm" para continuar.';
+        msg.className = 'form-msg err';
+        confirmEl.focus();
+        return;
+      }
+
+      msg.textContent = '¡Gracias! Te contactaremos pronto. 🎉';
+      msg.className = 'form-msg ok';
+      // colapso suave sin jank de height: opacity + scale, luego ocultar
+      gsap.to('#cta-form .field, #cta-form .confirm, #cta-form .btn-submit', {
+        opacity: 0, scale: 0.96, duration: 0.35, stagger: 0.05,
+        onComplete() {
+          form.querySelectorAll('.field, .confirm, .btn-submit').forEach(el => { el.style.display = 'none'; });
+        }
+      });
+    });
+
+    /* ---------- arranque + refresh ---------- */
+    const onReady = () => { startRotator(); ScrollTrigger.refresh(); };
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(onReady);
+    } else {
+      window.addEventListener('load', onReady);
+    }
+    // refresh extra cuando todas las imagenes SVG cargaron (posiciones de pin/caida)
+    window.addEventListener('load', () => ScrollTrigger.refresh());
+  })();
+  </script>
+</body>
+</html>
