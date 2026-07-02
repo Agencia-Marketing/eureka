@@ -34,6 +34,66 @@
       clip: rect(0 0 0 0); white-space: nowrap; border: 0;
     }
 
+    /* ===== NAV fijo ===== */
+    #site-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 50;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+    }
+    #site-nav .nav-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(18px, 3vw, 40px);
+    }
+    #site-nav .nav-logo {
+      display: inline-block;
+      font: 800 clamp(22px, 2.4vw, 30px)/0.9 system-ui, sans-serif;
+      letter-spacing: -1px;
+      color: var(--teal-accent);
+      text-decoration: none;
+    }
+    #site-nav .nav-logo span {
+      display: block;
+      text-align: right;
+      font-size: 0.4em;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--ink);
+    }
+    #site-nav .nav-divider {
+      width: 1.5px;
+      height: 34px;
+      background: rgba(0,0,0,0.18);
+    }
+    #site-nav .nav-links {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: clamp(16px, 2.4vw, 38px);
+    }
+    #site-nav .nav-links a {
+      font: 700 clamp(14px, 1.5vw, 16px) system-ui, sans-serif;
+      color: var(--purple);
+      text-decoration: none;
+      transition: color .12s;
+    }
+    #site-nav .nav-links a:hover { color: #7a2fce; }
+    #site-nav .nav-links a:focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; }
+    @media (max-width: 560px) {
+      #site-nav .nav-inner { flex-wrap: wrap; gap: 10px 18px; padding: 10px 16px; }
+      #site-nav .nav-divider { display: none; }
+      #site-nav .nav-links { gap: 16px; }
+    }
+
     /* lluvia fija detras de todo */
     #rain {
       position: fixed;
@@ -99,14 +159,22 @@
       z-index: 1;
       min-height: 70vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: clamp(20px, 4vh, 40px);
       padding: 40px 24px;
     }
     #rotator-section .phrase {
       font: 400 clamp(30px, 6vw, 72px)/1.15 system-ui, sans-serif;
       color: var(--ink);
       text-align: center;
+    }
+    #rotator-section .phrase-sub {
+      max-width: 720px;
+      text-align: center;
+      font: 400 clamp(15px, 2vw, 20px)/1.5 system-ui, sans-serif;
+      color: #555;
     }
     .rotator {
       display: inline-block;
@@ -131,12 +199,243 @@
       user-select: none;
     }
 
+    /* ===== SECCION TESTIMONIOS + LOGOS ===== */
+    #testimonials {
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(180deg, #f2e500 0%, #f7a233 45%, #ff3b5c 100%);
+      padding: clamp(60px, 10vh, 110px) 24px clamp(70px, 12vh, 130px);
+    }
+    #testimonials h2 {
+      font: 800 clamp(28px, 4.5vw, 46px)/1.05 system-ui, sans-serif;
+      color: var(--purple);
+      letter-spacing: -0.5px;
+      max-width: 1200px;
+      margin: 0 auto clamp(36px, 6vh, 64px);
+    }
+    /* --- slider de testimonios --- */
+    .t-slider {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      --slide-w: calc((100% - 48px) / 3);   /* JS lo recalcula segun perView */
+    }
+    .t-viewport { overflow: hidden; }
+    .t-track {
+      display: flex;
+      gap: 24px;
+      transform: translateX(0);
+      transition: transform .45s cubic-bezier(.4,0,.2,1);
+      will-change: transform;
+    }
+    .t-card {
+      flex: 0 0 var(--slide-w);
+      background: rgba(255, 205, 0, 0.75);
+      border-radius: 20px;
+      padding: 28px 26px;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.10);
+    }
+    .t-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--ink);
+      background: rgba(255,255,255,0.85);
+      color: var(--ink);
+      font: 700 26px/1 system-ui, sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s, opacity .15s, transform .12s;
+    }
+    .t-arrow.prev { left: -8px; }
+    .t-arrow.next { right: -8px; }
+    .t-arrow:hover { background: #fff; }
+    .t-arrow:active { transform: translateY(-50%) scale(0.92); }
+    .t-arrow:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+    .t-arrow[disabled] { opacity: 0.3; cursor: default; }
+    .t-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .t-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      background: rgba(94,23,168,0.30);
+      cursor: pointer;
+      transition: background .15s, transform .15s;
+    }
+    .t-dot.active { background: var(--purple); transform: scale(1.25); }
+    .t-dot:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+    .t-card blockquote {
+      font: 400 clamp(15px, 1.6vw, 18px)/1.5 system-ui, sans-serif;
+      color: var(--ink);
+    }
+    .t-person {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 26px;
+    }
+    .t-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex: 0 0 auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .t-avatar img { width: 80%; height: auto; display: block; }
+    .t-person .t-name {
+      font: 700 15px system-ui, sans-serif;
+      color: var(--ink);
+    }
+    .t-stars {
+      margin-top: 26px;
+      font-size: 22px;
+      letter-spacing: 10px;
+      color: #ffffff;
+    }
+    .t-card.highlight { background: #ffffff; }
+    .t-card.highlight .t-name { color: #f2708a; }
+    .t-card.highlight .t-stars { color: #f5c518; }
+    /* --- marquee de logos --- */
+    .t-logos {
+      overflow: hidden;
+      max-width: 1200px;
+      margin: clamp(90px, 18vh, 200px) auto 0;
+    }
+    .t-logos-track {
+      display: flex;
+      width: max-content;
+      align-items: center;
+      gap: clamp(30px, 6vw, 80px);
+      will-change: transform;
+    }
+    .t-logo {
+      font: 700 clamp(18px, 2.2vw, 26px)/1 system-ui, sans-serif;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+    .t-logo.faded  { opacity: 0.22; }
+    .t-logo.script { font-family: 'Segoe Script', 'Comic Sans MS', cursive; font-weight: 400; }
+    .t-logo.light  { font-weight: 300; letter-spacing: 1px; }
+
+    /* ===== SECCION BRANDS SCENE (escena parque) ===== */
+    #brands-scene {
+      position: relative;
+      z-index: 1;
+      background: #ffffff;
+      overflow: hidden;
+      padding: clamp(50px, 8vh, 90px) 24px 0;
+      min-height: clamp(560px, 92vh, 840px);
+      display: flex;
+      flex-direction: column;
+    }
+    #brands-scene .bs-head {
+      position: relative;
+      z-index: 3;
+      max-width: 820px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    #brands-scene .bs-head h2 {
+      font: 800 clamp(30px, 4.5vw, 50px)/1.05 system-ui, sans-serif;
+      color: var(--teal-accent);
+      letter-spacing: -0.5px;
+    }
+    #brands-scene .bs-head p {
+      margin-top: 16px;
+      font: 700 clamp(15px, 1.9vw, 20px)/1.5 system-ui, sans-serif;
+      color: var(--ink);
+    }
+    #brands-scene .bs-deco {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #brands-scene .bs-deco .d { position: absolute; }
+    #brands-scene .bs-deco svg * {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #brands-scene .bs-deco .ground-deco { bottom: clamp(64px, 11vh, 112px); stroke-width: 2.5; }
+    #brands-scene .bs-deco .ground-deco * { stroke-width: 2.5; }
+    #brands-scene .bs-ground {
+      position: absolute;
+      left: 0;
+      bottom: clamp(64px, 11vh, 112px);
+      width: 100%;
+      height: 10px;
+    }
+    #brands-scene .bs-ground * { stroke-width: 2.5; }
+    #brands-scene .bs-characters {
+      position: relative;
+      z-index: 2;
+      max-width: 1150px;
+      width: 100%;
+      margin: auto auto 0;
+      padding-bottom: clamp(60px, 10.5vh, 108px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: clamp(6px, 3vw, 48px);
+    }
+    #brands-scene .bs-char { width: auto; display: block; }
+    #brands-scene .bs-char-wrap { position: relative; display: flex; align-items: flex-end; }
+    #brands-scene .promo-tag {
+      position: absolute;
+      top: -14px;
+      right: -30px;
+      z-index: 4;
+      background: #fff;
+      border: 3px solid var(--ink);
+      border-radius: 8px;
+      padding: 4px 9px;
+      font: 800 12px/1 system-ui, sans-serif;
+      color: var(--ink);
+      white-space: nowrap;
+      transform: rotate(8deg);
+    }
+    #brands-scene .promo-tag::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      bottom: -8px;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-right: 3px solid var(--ink);
+      border-bottom: 3px solid var(--ink);
+      transform: rotate(45deg);
+    }
+    @media (max-width: 560px) {
+      #brands-scene .bs-characters { gap: 2px; padding-bottom: 54px; }
+      #brands-scene .promo-tag { right: -18px; font-size: 10px; padding: 3px 6px; }
+    }
+
     /* ===== SECCION CTA ===== */
     #cta {
       position: relative;
       z-index: 1;
       min-height: 100vh;
-      padding: 60px 24px 0;
+      padding: 60px 24px clamp(90px, 14vh, 160px);
       overflow: hidden;
     }
     #cta .deco {
@@ -288,6 +587,118 @@
     #cta .form-msg.ok  { color: #0a7d2c; }
     #cta .form-msg.err { color: #b21f1f; }
 
+    /* ===== FOOTER ===== */
+    #site-footer {
+      position: relative;
+      z-index: 1;
+      background: #ffffff;
+      padding: 0 clamp(12px, 3vw, 40px) clamp(16px, 3vw, 32px);
+    }
+    #site-footer .ft-card {
+      position: relative;
+      overflow: hidden;
+      max-width: 1240px;
+      margin: 0 auto;
+      background: #17c8a4;
+      border-radius: 28px;
+      padding: clamp(36px, 5vw, 60px) clamp(24px, 5vw, 72px);
+    }
+    #site-footer .ft-deco {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #site-footer .ft-deco .d { position: absolute; }
+    #site-footer .ft-deco svg * {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #site-footer .ft-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: clamp(28px, 5vw, 64px);
+      align-items: start;
+    }
+    /* marca */
+    #site-footer .ft-logo {
+      display: inline-block;
+      font: 800 clamp(30px, 3.4vw, 40px)/0.9 system-ui, sans-serif;
+      letter-spacing: -1px;
+      color: var(--purple);
+      text-decoration: none;
+    }
+    #site-footer .ft-logo span {
+      display: block;
+      text-align: right;
+      font-size: 0.4em;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--yellow);
+    }
+    #site-footer .ft-social {
+      display: flex;
+      gap: 12px;
+      margin-top: 22px;
+    }
+    #site-footer .ft-social a {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: #241c46;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .12s, background .15s;
+    }
+    #site-footer .ft-social a:hover { background: var(--purple); transform: translateY(-2px); }
+    #site-footer .ft-social svg { width: 17px; height: 17px; fill: #fff; }
+    #site-footer .ft-social a:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+    /* columnas de texto */
+    #site-footer .ft-col { display: flex; flex-direction: column; gap: 14px; }
+    #site-footer .ft-col h3 {
+      font: 700 clamp(16px, 1.6vw, 19px) system-ui, sans-serif;
+      color: var(--purple);
+      margin-bottom: 4px;
+    }
+    #site-footer .ft-col a,
+    #site-footer .ft-col span {
+      font: 400 15px/1.2 system-ui, sans-serif;
+      color: #2b2550;
+      text-decoration: none;
+      width: fit-content;
+    }
+    #site-footer .ft-col a { transition: color .12s; }
+    #site-footer .ft-col a:hover { color: var(--purple); }
+    #site-footer .ft-menu a { text-decoration: underline; text-underline-offset: 3px; }
+    #site-footer .ft-col a:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+    /* pie */
+    #site-footer .ft-bottom {
+      position: relative;
+      z-index: 2;
+      margin-top: clamp(28px, 4vw, 44px);
+      padding-top: 20px;
+      border-top: 1.5px solid rgba(43,37,80,0.35);
+      text-align: center;
+    }
+    #site-footer .ft-bottom p {
+      font: 400 13px system-ui, sans-serif;
+      color: #2b2550;
+      letter-spacing: 0.3px;
+    }
+    @media (max-width: 720px) {
+      #site-footer .ft-grid { grid-template-columns: 1fr 1fr; }
+      #site-footer .ft-brand { grid-column: 1 / -1; }
+    }
+    @media (max-width: 460px) {
+      #site-footer .ft-grid { grid-template-columns: 1fr; }
+    }
+
     /* respeto a usuarios sensibles al movimiento: sin transiciones CSS */
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; }
@@ -302,6 +713,19 @@
     </symbol>
   </svg>
 
+  <header id="site-nav">
+    <nav class="nav-inner" aria-label="Primary">
+      <a class="nav-logo" href="#hero" aria-label="Eureka Brands — inicio">eureka<span>brands</span></a>
+      <span class="nav-divider" aria-hidden="true"></span>
+      <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#rotator-section">Services</a></li>
+        <li><a href="#testimonials">Pricing</a></li>
+        <li><a href="#cta">Store</a></li>
+      </ul>
+    </nav>
+  </header>
+
   <svg id="rain" preserveAspectRatio="none" aria-hidden="true"></svg>
 
   <section id="hero">
@@ -312,7 +736,7 @@
 
     <div id="copy">
       <h1>WHERE SPARK<br>MEETS STRATEGY</h1>
-      <p>Cuando bajas, los eurekans desaparecen por los bordes y este texto sube.</p>
+      <p>We are the agency that builds the creative firepower and the operational systems that turn big ideas into a steady stream of clients.</p>
     </div>
   </section>
 
@@ -320,8 +744,151 @@
     <h2 class="phrase">
       <span>If you are</span><br>
       <span class="rotator" aria-hidden="true"></span>
-      <span class="sr-only">an entrepreneur, content creator, or bold brand</span>
+      <span class="sr-only">an entrepreneur, mentor, content creator, or bold brand</span>
     </h2>
+    <p class="phrase-sub">You have a strong offer, you deliver real results, and you know your marketing should be working harder for your business — you're in the right place.</p>
+  </section>
+
+  <section id="testimonials">
+    <h2>Brands That Trusted Their Eureka Moment</h2>
+
+    <div class="t-slider">
+      <button type="button" class="t-arrow prev" aria-label="Previous testimonials">‹</button>
+      <div class="t-viewport">
+        <div class="t-track">
+          <article class="t-card">
+            <blockquote>&ldquo;Lorem ipsum dolor sit amet consectetur adipiscing elit facilisi, magna orquent feugiat volutpat.&rdquo;</blockquote>
+            <div class="t-person">
+              <span class="t-avatar" style="background:#0f47bb"><img src="eureka-azul.svg" alt="" aria-hidden="true" /></span>
+              <span class="t-name">Lorem ipsum</span>
+            </div>
+            <div class="t-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+          </article>
+
+          <article class="t-card">
+            <blockquote>&ldquo;Lorem ipsum dolor sit amet consectetur adipiscing elit facilisi, magna orquent feugiat volutpat.&rdquo;</blockquote>
+            <div class="t-person">
+              <span class="t-avatar" style="background:#0c7a6c"><img src="eureka-verde.svg" alt="" aria-hidden="true" /></span>
+              <span class="t-name">Lorem ipsum</span>
+            </div>
+            <div class="t-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+          </article>
+
+          <article class="t-card highlight">
+            <blockquote>&ldquo;Lorem ipsum dolor sit amet consectetur adipiscing elit facilisi, magna orquent feugiat volutpat.&rdquo;</blockquote>
+            <div class="t-person">
+              <span class="t-avatar" style="background:#c81e1e"><img src="eureka-rojo.svg" alt="" aria-hidden="true" /></span>
+              <span class="t-name">Lorem ipsum</span>
+            </div>
+            <div class="t-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+          </article>
+
+          <article class="t-card">
+            <blockquote>&ldquo;Lorem ipsum dolor sit amet consectetur adipiscing elit facilisi, magna orquent feugiat volutpat.&rdquo;</blockquote>
+            <div class="t-person">
+              <span class="t-avatar" style="background:#e0a800"><img src="eureka-amarillo.svg" alt="" aria-hidden="true" /></span>
+              <span class="t-name">Lorem ipsum</span>
+            </div>
+            <div class="t-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+          </article>
+
+          <article class="t-card highlight">
+            <blockquote>&ldquo;Lorem ipsum dolor sit amet consectetur adipiscing elit facilisi, magna orquent feugiat volutpat.&rdquo;</blockquote>
+            <div class="t-person">
+              <span class="t-avatar" style="background:#0f47bb"><img src="eureka-azul.svg" alt="" aria-hidden="true" /></span>
+              <span class="t-name">Lorem ipsum</span>
+            </div>
+            <div class="t-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+          </article>
+
+          <article class="t-card">
+            <blockquote>&ldquo;Lorem ipsum dolor sit amet consectetur adipiscing elit facilisi, magna orquent feugiat volutpat.&rdquo;</blockquote>
+            <div class="t-person">
+              <span class="t-avatar" style="background:#0c7a6c"><img src="eureka-verde.svg" alt="" aria-hidden="true" /></span>
+              <span class="t-name">Lorem ipsum</span>
+            </div>
+            <div class="t-stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+          </article>
+        </div>
+      </div>
+      <button type="button" class="t-arrow next" aria-label="Next testimonials">›</button>
+      <div class="t-dots" role="tablist" aria-label="Testimonial pages"></div>
+    </div>
+
+    <div class="t-logos" aria-label="Brands we've worked with">
+      <div class="t-logos-track">
+        <span class="t-logo faded light">ACME</span>
+        <span class="t-logo script">fossa</span>
+        <span class="t-logo">Nordic</span>
+        <span class="t-logo light">nirastate</span>
+        <span class="t-logo script faded">Pixel Co</span>
+        <span class="t-logo faded">oculto</span>
+        <span class="t-logo faded light" aria-hidden="true">ACME</span>
+        <span class="t-logo script" aria-hidden="true">fossa</span>
+        <span class="t-logo" aria-hidden="true">Nordic</span>
+        <span class="t-logo light" aria-hidden="true">nirastate</span>
+        <span class="t-logo script faded" aria-hidden="true">Pixel Co</span>
+        <span class="t-logo faded" aria-hidden="true">oculto</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="brands-scene">
+    <div class="bs-head">
+      <h2>This Is Eureka Brands</h2>
+      <p>Every brand has that &ldquo;aha!&rdquo; moment waiting to happen.<br>
+         You're here to find yours and share it with the world.</p>
+    </div>
+
+    <div class="bs-deco" aria-hidden="true">
+      <!-- nubes (reusan el symbol) -->
+      <svg class="d cloud" style="top:14%;left:8%;width:120px"  viewBox="0 0 110 50"><use href="#cloud"/></svg>
+      <svg class="d cloud" style="top:8%;left:28%;width:95px"   viewBox="0 0 110 50"><use href="#cloud"/></svg>
+      <svg class="d cloud" style="top:20%;right:7%;width:150px" viewBox="0 0 110 50"><use href="#cloud"/></svg>
+      <svg class="d cloud" style="top:36%;left:30%;width:90px"  viewBox="0 0 110 50"><use href="#cloud"/></svg>
+
+      <!-- garabatos sueltos -->
+      <svg class="d" style="top:30%;left:4%;width:16px"   viewBox="0 0 20 20"><path d="M10 3 V17 M3 10 H17"/></svg>
+      <svg class="d" style="top:44%;left:14%;width:18px"  viewBox="0 0 20 20"><path d="M10 3 V17 M3 10 H17"/></svg>
+      <svg class="d" style="top:52%;right:16%;width:18px" viewBox="0 0 20 20"><path d="M10 3 V17 M3 10 H17"/></svg>
+      <svg class="d" style="top:33%;right:4%;width:16px"  viewBox="0 0 20 20"><circle cx="10" cy="10" r="6"/></svg>
+      <svg class="d" style="top:56%;left:9%;width:14px"   viewBox="0 0 20 20"><circle cx="10" cy="10" r="6"/></svg>
+      <svg class="d" style="top:28%;left:3.5%;width:16px" viewBox="0 0 20 20"><path d="M10 2 L18 10 L10 18 L2 10 Z"/></svg>
+      <svg class="d" style="top:48%;right:27%;width:14px" viewBox="0 0 20 20"><path d="M10 2 L18 10 L10 18 L2 10 Z"/></svg>
+      <svg class="d" style="top:38%;left:12%;width:56px"  viewBox="0 0 60 16"><path d="M2 8 Q9 0 16 8 T30 8 T44 8 T58 8"/></svg>
+      <svg class="d" style="top:26%;right:20%;width:56px" viewBox="0 0 60 16"><path d="M2 8 Q9 0 16 8 T30 8 T44 8 T58 8"/></svg>
+
+      <!-- vegetacion de fondo -->
+      <svg class="d ground-deco" style="left:2%;width:130px"   viewBox="0 0 120 200"><circle cx="42" cy="48" r="34"/><circle cx="76" cy="66" r="26"/><circle cx="34" cy="82" r="28"/><path d="M50 104 V196"/></svg>
+      <svg class="d ground-deco" style="left:12%;width:80px"   viewBox="0 0 90 210"><path d="M45 8 L74 70 H16 Z"/><path d="M45 55 L80 130 H10 Z"/><path d="M45 108 L86 196 H4 Z"/><path d="M45 180 V208"/></svg>
+      <svg class="d ground-deco" style="right:2%;width:70px"   viewBox="0 0 80 210"><path d="M40 8 L66 68 H14 Z"/><path d="M40 52 L72 126 H8 Z"/><path d="M40 104 L78 192 H2 Z"/><path d="M40 178 V208"/></svg>
+      <svg class="d ground-deco" style="right:11%;width:120px" viewBox="0 0 110 200"><circle cx="40" cy="52" r="32"/><circle cx="72" cy="64" r="26"/><circle cx="52" cy="86" r="28"/><path d="M52 108 V196"/></svg>
+
+      <!-- farolas -->
+      <svg class="d ground-deco" style="left:24%;width:52px;z-index:1" viewBox="0 0 60 170"><path d="M18 168 V26 Q18 12 32 12 H50"/><path d="M40 12 h20 v10 h-20 z"/></svg>
+      <svg class="d ground-deco" style="right:24%;width:52px;z-index:1" viewBox="0 0 60 170"><path d="M42 168 V26 Q42 12 28 12 H10"/><path d="M0 12 h20 v10 H0 z"/></svg>
+
+      <!-- bancas -->
+      <svg class="d ground-deco" style="left:20%;width:110px" viewBox="0 0 120 60"><path d="M6 16 H114 M6 30 H114 M14 30 V54 M106 30 V54 M14 16 V4 M106 16 V4"/></svg>
+      <svg class="d ground-deco" style="right:19%;width:100px" viewBox="0 0 120 60"><path d="M6 16 H114 M6 30 H114 M14 30 V54 M106 30 V54 M14 16 V4 M106 16 V4"/></svg>
+
+      <!-- arbustos -->
+      <svg class="d ground-deco" style="left:34%;width:110px" viewBox="0 0 140 46"><path d="M2 44 Q14 20 30 32 Q40 10 60 26 Q74 12 90 28 Q110 18 122 34 Q134 28 138 44"/></svg>
+      <svg class="d ground-deco" style="right:33%;width:120px" viewBox="0 0 140 46"><path d="M2 44 Q14 20 30 32 Q40 10 60 26 Q74 12 90 28 Q110 18 122 34 Q134 28 138 44"/></svg>
+
+      <!-- linea de suelo -->
+      <svg class="bs-ground" preserveAspectRatio="none" viewBox="0 0 1000 10"><path d="M0 5 H1000"/></svg>
+    </div>
+
+    <div class="bs-characters" aria-hidden="true">
+      <img class="bs-char" src="eureka-rojo.svg"     alt="" style="height:clamp(120px,20vw,210px)" />
+      <div class="bs-char-wrap">
+        <span class="promo-tag">20% OFF</span>
+        <img class="bs-char" src="eureka-amarillo.svg" alt="" style="height:clamp(140px,23vw,240px)" />
+      </div>
+      <img class="bs-char" src="eureka-azul.svg"     alt="" style="height:clamp(105px,18vw,185px)" />
+      <img class="bs-char" src="eureka-verde.svg"    alt="" style="height:clamp(120px,20vw,205px)" />
+    </div>
   </section>
 
   <section id="cta">
@@ -351,8 +918,8 @@
     <!-- encabezado + burbuja -->
     <div class="cta-head">
       <div class="txt">
-        <h2>Ready To Get Started?</h2>
-        <p>If you're an entrepreneur or brand that values creativity, authenticity, and real results, let's talk.</p>
+        <h2>Ready to get started?</h2>
+        <p>Let's talk! First, we'll ask a few questions about where your business currently stands so we can make the most of your 30-minute session.</p>
       </div>
       <div class="bubble">
         <img src="eureka-amarillo.svg" alt="" aria-hidden="true" />
@@ -381,10 +948,64 @@
       <label class="confirm">
         <input type="checkbox" id="f-confirm" checked /> Confirm
       </label>
-      <button type="submit" class="btn-submit">Book Your Discovery Call</button>
+      <button type="submit" class="btn-submit">Show me where I stand</button>
       <div class="form-msg" id="form-msg" role="status" aria-live="polite"></div>
     </form>
   </section>
+
+  <footer id="site-footer">
+    <div class="ft-card">
+      <div class="ft-deco" aria-hidden="true">
+        <svg class="d cloud" style="top:18%;left:6%;width:110px"  viewBox="0 0 110 50"><use href="#cloud"/></svg>
+        <svg class="d cloud" style="top:8%;left:34%;width:70px"   viewBox="0 0 110 50"><use href="#cloud"/></svg>
+        <svg class="d cloud" style="top:20%;right:9%;width:130px" viewBox="0 0 110 50"><use href="#cloud"/></svg>
+        <svg class="d cloud" style="bottom:12%;left:14%;width:100px" viewBox="0 0 110 50"><use href="#cloud"/></svg>
+        <svg class="d" style="top:24%;left:12%;width:16px"  viewBox="0 0 20 20"><path d="M10 3 V17 M3 10 H17"/></svg>
+        <svg class="d" style="bottom:14%;left:80%;width:16px" viewBox="0 0 20 20"><path d="M10 3 V17 M3 10 H17"/></svg>
+        <svg class="d" style="top:20%;left:57%;width:16px"  viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/></svg>
+        <svg class="d" style="bottom:26%;left:29%;width:16px" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/></svg>
+        <svg class="d" style="bottom:30%;right:8%;width:16px"  viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/></svg>
+        <svg class="d" style="top:14%;right:3%;width:22px"    viewBox="0 0 24 8"><path d="M2 4 H22"/></svg>
+        <svg class="d" style="bottom:34%;left:74%;width:56px" viewBox="0 0 60 16"><path d="M2 8 Q9 0 16 8 T30 8 T44 8 T58 8"/></svg>
+      </div>
+
+      <div class="ft-grid">
+        <div class="ft-brand">
+          <a class="ft-logo" href="#hero" aria-label="Eureka Brands — inicio">eureka<span>brands</span></a>
+          <div class="ft-social">
+            <a href="#" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 9V7.5c0-.7.3-1 1.1-1H16.5V4h-2.4C11.7 4 11 5.3 11 7.2V9H9.2v2.6H11V20h3v-8.4h2.2l.4-2.6H14z"/></svg>
+            </a>
+            <a href="#" aria-label="TikTok">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 4c.3 1.9 1.5 3.3 3.5 3.6v2.4c-1.2 0-2.4-.4-3.5-1.1v5.2c0 3-2.1 5-4.8 5-2.6 0-4.7-1.9-4.7-4.6 0-2.8 2.4-4.9 5.4-4.4v2.5c-.4-.1-.9-.2-1.3-.1-1.1.1-1.9.9-1.8 2.1.1 1.1 1 1.9 2.1 1.8 1.1-.1 1.8-1 1.8-2.3V4h1.8z"/></svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7.2A4.8 4.8 0 1012 16.8 4.8 4.8 0 0012 7.2zm0 7.9a3.1 3.1 0 110-6.2 3.1 3.1 0 010 6.2zM17 4H7a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3zm1.3 13c0 .7-.6 1.3-1.3 1.3H7c-.7 0-1.3-.6-1.3-1.3V7c0-.7.6-1.3 1.3-1.3h10c.7 0 1.3.6 1.3 1.3v10zM17.4 6.2a1.1 1.1 0 100 2.2 1.1 1.1 0 000-2.2z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <nav class="ft-col" aria-label="Contact">
+          <h3>Contact us</h3>
+          <a href="mailto:info@eureka.com">info@eureka.com</a>
+          <a href="tel:+123456789">123 456 789</a>
+          <span>Location</span>
+        </nav>
+
+        <nav class="ft-col ft-menu" aria-label="Menu">
+          <h3>Menu</h3>
+          <a href="#hero">Home</a>
+          <a href="#rotator-section">Services</a>
+          <a href="#testimonials">Pricing</a>
+          <a href="#cta">Store</a>
+        </nav>
+      </div>
+
+      <div class="ft-bottom">
+        <p>Copyright &copy; 2025. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 
   <div id="scrollhint">▼ scroll ▼</div>
 
@@ -406,7 +1027,7 @@
     const CONFIG = {
       rain:    { count: 90, minLen: 40, maxLen: 120, minW: 0.8, maxW: 2, minDur: 0.5, maxDur: 1.1 },
       hero:    { exit: 260 },
-      rotator: { words: ['entrepreneur', 'content creator', 'bold brand'], hold: 1.2, inDur: 0.35, outDur: 0.4, stagger: 0.07 },
+      rotator: { words: ['Entrepreneur', 'Mentor', 'Content Creator', 'Bold Brand'], hold: 1.2, inDur: 0.35, outDur: 0.4, stagger: 0.07 },
       cta:     { fallFrom: -160, fallDur: 1.1 }
     };
 
@@ -550,6 +1171,153 @@
           .to(letters, { opacity: 0, duration: cfg.outDur, ease: 'power1.in' }, `+=${cfg.hold}`);
       };
       cycle(0);
+    }
+
+    /* ---------- SECCION TESTIMONIOS: slider + marquee ---------- */
+    (() => {
+      const slider   = document.querySelector('.t-slider');
+      const track    = document.querySelector('.t-track');
+      const cards    = gsap.utils.toArray('.t-track .t-card');
+      const prevBtn  = document.querySelector('.t-arrow.prev');
+      const nextBtn  = document.querySelector('.t-arrow.next');
+      const dotsWrap = document.querySelector('.t-dots');
+      const GAP = 24, AUTO_MS = 5000;
+      let index = 0, autoId = null;
+
+      const perView  = () => window.innerWidth >= 900 ? 3 : window.innerWidth >= 560 ? 2 : 1;
+      const maxIndex = () => Math.max(0, cards.length - perView());
+
+      function buildDots() {
+        dotsWrap.innerHTML = '';
+        for (let i = 0; i <= maxIndex(); i++) {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 't-dot';
+          b.setAttribute('role', 'tab');
+          b.setAttribute('aria-label', `Go to testimonial ${i + 1}`);
+          b.addEventListener('click', () => { go(i); restartAuto(); });
+          dotsWrap.appendChild(b);
+        }
+      }
+
+      function go(i) {
+        index = Math.min(Math.max(i, 0), maxIndex());
+        const cardW = cards[0].getBoundingClientRect().width;
+        track.style.transform = `translateX(${-index * (cardW + GAP)}px)`;
+        prevBtn.disabled = index === 0;
+        nextBtn.disabled = index === maxIndex();
+        dotsWrap.querySelectorAll('.t-dot').forEach((d, k) => {
+          d.classList.toggle('active', k === index);
+          d.setAttribute('aria-selected', k === index ? 'true' : 'false');
+        });
+      }
+
+      function layout() {
+        const pv = perView();
+        slider.style.setProperty('--slide-w', `calc((100% - ${(pv - 1) * GAP}px) / ${pv})`);
+        if (dotsWrap.children.length !== maxIndex() + 1) buildDots();
+        go(Math.min(index, maxIndex()));
+      }
+
+      const startAuto = () => { if (!reduced && !autoId) autoId = setInterval(() => go(index >= maxIndex() ? 0 : index + 1), AUTO_MS); };
+      const stopAuto  = () => { clearInterval(autoId); autoId = null; };
+      const restartAuto = () => { stopAuto(); startAuto(); };
+
+      prevBtn.addEventListener('click', () => { go(index - 1); restartAuto(); });
+      nextBtn.addEventListener('click', () => { go(index + 1); restartAuto(); });
+      slider.addEventListener('mouseenter', stopAuto);
+      slider.addEventListener('mouseleave', startAuto);
+
+      // swipe / drag
+      let downX = null;
+      const viewport = document.querySelector('.t-viewport');
+      viewport.addEventListener('pointerdown', e => { downX = e.clientX; stopAuto(); });
+      viewport.addEventListener('pointerup', e => {
+        if (downX === null) return;
+        const dx = e.clientX - downX;
+        if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
+        downX = null;
+        startAuto();
+      });
+
+      let rid;
+      window.addEventListener('resize', () => { clearTimeout(rid); rid = setTimeout(layout, 200); });
+
+      buildDots();
+      layout();
+      startAuto();
+
+      // marquee de logos (cinta duplicada -> -50% reinicia sin salto)
+      if (!reduced) {
+        const logosTrack = document.querySelector('.t-logos-track');
+        const logosWrap  = document.querySelector('.t-logos');
+        const marquee = gsap.to(logosTrack, { xPercent: -50, duration: 22, ease: 'none', repeat: -1 });
+        logosWrap.addEventListener('mouseenter', () => marquee.pause());
+        logosWrap.addEventListener('mouseleave', () => marquee.resume());
+      }
+
+      // entrada al hacer scroll
+      if (!reduced) {
+        gsap.set(['#testimonials h2', '.t-slider', '.t-logos'], { opacity: 0 });
+        ScrollTrigger.create({
+          trigger: '#testimonials',
+          start: 'top 70%',
+          once: true,
+          onEnter() {
+            gsap.timeline()
+              .from('#testimonials h2', { y: 30, duration: 0.6, ease: 'power3.out' })
+              .to('#testimonials h2', { opacity: 1, duration: 0.6 }, '<')
+              .from('.t-slider', { y: 40, duration: 0.6, ease: 'power3.out' }, '-=0.3')
+              .to('.t-slider', { opacity: 1, duration: 0.6 }, '<')
+              .to('.t-logos', { opacity: 1, duration: 0.5 }, '-=0.2');
+          }
+        });
+      }
+    })();
+
+    /* ---------- SECCION BRANDS SCENE: personajes corriendo ---------- */
+    {
+      const head  = '#brands-scene .bs-head';
+      const deco  = ['#brands-scene .bs-deco .d', '#brands-scene .bs-ground'];
+      const tag   = '#brands-scene .promo-tag';
+      // unidades = hijos directos de .bs-characters (rojo, wrap[amarillo+tag], azul, verde)
+      const units = gsap.utils.toArray('#brands-scene .bs-characters > *');
+
+      // los personajes SIEMPRE visibles y en su sitio (robusto: no dependen del scroll-trigger)
+      gsap.set(units, { opacity: 1, transformOrigin: '50% 100%' });
+
+      if (reduced) {
+        gsap.set([head, ...deco, tag], { opacity: 1 });
+      } else {
+        // trote continuo: rebote vertical + balanceo, desfasados => parecen correr en su sitio
+        // (eje Y + rotacion; el eje X queda libre para el deslizamiento de entrada)
+        units.forEach((u, i) => {
+          const d = 0.30 + i * 0.03;
+          gsap.to(u, { y: -9,               duration: d, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: i * 0.08 });
+          gsap.to(u, { rotation: i % 2 ? 3 : -3, duration: d, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: i * 0.08 });
+        });
+
+        gsap.set([head, ...deco, tag], { opacity: 0 });
+
+        ScrollTrigger.create({
+          trigger: '#brands-scene',
+          start: 'top 75%',
+          once: true,
+          onEnter() {
+            // entran corriendo desde la izquierda (solo eje X; se crea aqui, nunca antes)
+            units.forEach((u, i) => {
+              const startX = -(u.getBoundingClientRect().right + 140);
+              gsap.fromTo(u, { x: startX }, { x: 0, duration: 0.9, ease: 'power2.out', delay: 0.1 + i * 0.14 });
+            });
+            gsap.timeline()
+              .from(head, { y: 30, opacity: 0, duration: 0.6, ease: 'power3.out' })
+              .to(head, { opacity: 1, duration: 0.6 }, '<')
+              .to(deco, { opacity: 1, duration: 0.5, stagger: 0.04 }, '-=0.3')
+              .to(tag,  { opacity: 1, duration: 0.3 }, '-=0.1')
+              .from(tag, { scale: 0, duration: 0.4, ease: 'back.out(2)', transformOrigin: '50% 100%' }, '<');
+          }
+        });
+      }
     }
 
     /* ---------- SECCION CTA: entrada + validacion ---------- */
