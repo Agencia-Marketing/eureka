@@ -1,0 +1,11 @@
+{
+  "name": "eureka-rain",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Eureka Brands landing — static single-page site (no build step)",
+  "scripts": {
+    "build": "echo \"No build step — static site, assets served as-is\"",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  }
+}
