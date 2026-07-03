@@ -88,10 +88,53 @@
     }
     #site-nav .nav-links a:hover { color: #7a2fce; }
     #site-nav .nav-links a:focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; }
-    @media (max-width: 560px) {
-      #site-nav .nav-inner { flex-wrap: wrap; gap: 10px 18px; padding: 10px 16px; }
+    /* boton hamburguesa (oculto en desktop) */
+    #site-nav .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 42px;
+      height: 42px;
+      padding: 9px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+    #site-nav .nav-toggle span {
+      display: block;
+      width: 100%;
+      height: 2.5px;
+      border-radius: 2px;
+      background: var(--purple);
+      transition: transform .25s ease, opacity .2s ease;
+    }
+    #site-nav .nav-toggle:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; border-radius: 6px; }
+    @media (max-width: 640px) {
+      #site-nav .nav-inner { justify-content: space-between; gap: 12px; padding: 10px 18px; }
       #site-nav .nav-divider { display: none; }
-      #site-nav .nav-links { gap: 16px; }
+      #site-nav .nav-toggle { display: flex; }
+      #site-nav .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        background: #ffffff;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .3s ease;
+      }
+      #site-nav.open .nav-links { max-height: 320px; }
+      #site-nav .nav-links li + li { border-top: 1px solid rgba(0,0,0,0.07); }
+      #site-nav .nav-links a { display: block; padding: 15px 22px; font-size: 16px; }
+      /* animar hamburguesa -> X */
+      #site-nav.open .nav-toggle span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+      #site-nav.open .nav-toggle span:nth-child(2) { opacity: 0; }
+      #site-nav.open .nav-toggle span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
     }
 
     /* lluvia fija detras de todo */
@@ -719,7 +762,10 @@
     <nav class="nav-inner" aria-label="Primary">
       <a class="nav-logo" href="#hero" aria-label="Eureka Brands — inicio">eureka<span>brands</span></a>
       <span class="nav-divider" aria-hidden="true"></span>
-      <ul class="nav-links">
+      <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
         <li><a href="#hero">Home</a></li>
         <li><a href="#rotator-section">Services</a></li>
         <li><a href="#testimonials">Pricing</a></li>
@@ -1024,6 +1070,22 @@
   (() => {
     'use strict';
     gsap.registerPlugin(ScrollTrigger);
+
+    /* ---------- NAV movil: hamburguesa ---------- */
+    (() => {
+      const nav = document.getElementById('site-nav');
+      const toggle = nav.querySelector('.nav-toggle');
+      const setOpen = open => {
+        nav.classList.toggle('open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      };
+      toggle.addEventListener('click', () => setOpen(!nav.classList.contains('open')));
+      // cerrar al elegir un enlace
+      nav.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+      // cerrar con Escape
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+    })();
 
     /* ---------- CONFIG central ---------- */
     const CONFIG = {
